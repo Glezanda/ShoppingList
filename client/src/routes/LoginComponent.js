@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { useAuth } from '../AuthContext';
+=======
+import { useAuth } from './AuthContext';
+>>>>>>> 2cd8ea000c40dc073515e3fffa5b36ee81e02ac5
 
 const LoginComponent = () => {
   const { login } = useAuth();
