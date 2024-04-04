@@ -23,7 +23,7 @@ function App() {
       id: 2,
       name: 'Book',
       owner: 'Alice',
-      members: ['Alice', 'Bob'],
+      members: ['Alice', 'Bob', 'John'],
       items: [
         { id: 1, name: 'Harry Potter', resolved: true },
         { id: 2, name: 'Lord of the Rings', resolved: false }
@@ -33,6 +33,14 @@ function App() {
   ]);
 
   const [user, setUser] = useState(null);
+
+  // Define the list of users
+  const USERS = [
+    { id: "123", name: "James" },
+    { id: "234", name: "Amelia" },
+    { id: "345", name: "John" },
+    { id: "456", name: "Chloe" }
+  ];
 
   const addNewShoppingList = (newList) => {
     setShoppingLists([...shoppingLists, newList]);
@@ -56,7 +64,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<ShoppingListsOverview shoppingLists={shoppingLists} setShoppingLists={setShoppingLists} removeShoppingList={removeShoppingList} user={user} setUser={setUser} updateShoppingList={updateShoppingList} />}
+            element={<ShoppingListsOverview shoppingLists={shoppingLists} setShoppingLists={setShoppingLists} removeShoppingList={removeShoppingList} user={user} setUser={setUser} updateShoppingList={updateShoppingList} users={USERS} />}
           />
           <Route
             path="/create-shopping-list"
@@ -64,7 +72,7 @@ function App() {
           />
           <Route
             path="/shopping-list/:id"
-            element={<ShoppingListDetail shoppingLists={shoppingLists} updateShoppingList={updateShoppingList} user={user} />}
+            element={<ShoppingListDetail shoppingLists={shoppingLists} updateShoppingList={updateShoppingList} user={user} setUser={setUser} users={USERS} />} // Pass setUser as a prop
           />
         </Routes>
       </Router>

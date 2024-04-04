@@ -4,8 +4,9 @@ import markAsResolvedIcon from '../images/mark_as_resolved_icon.png';
 import removeIcon from '../images/remove_icon.png';
 import addIcon from '../images/add_icon.png';
 import backIcon from '../images/back_icon.png';
+// import logoutIcon from '../images/logout_icon.png'; // Commented out to remove unused variable warning
 
-function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
+function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }) {
   const { id } = useParams();
   const [editedName, setEditedName] = useState('');
   const [newMember, setNewMember] = useState('');
@@ -29,37 +30,44 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   };
 
   const handleMemberAdd = () => {
-    if (user.username === shoppingList.owner) {
-      if (!/^[a-zA-Z\s]+$/.test(newMember.trim())) {
-        alert('Please enter a valid member name containing only letters.');
-        return;
-      }
-      const updatedMembers = [...shoppingList.members, newMember];
-      updateShoppingList({ ...shoppingList, members: updatedMembers });
-      setNewMember('');
+    if (!/^[a-zA-Z\s]+$/.test(newMember.trim())) {
+      alert('Please enter a valid member name containing only letters.');
+      return;
     }
+    const updatedMembers = [...shoppingList.members, newMember];
+    updateShoppingList({ ...shoppingList, members: updatedMembers });
+    setNewMember('');
   };
   
   const handleMemberRemove = (member) => {
+    // Only allow owner to remove members
     if (user.username === shoppingList.owner) {
       const updatedMembers = shoppingList.members.filter(m => m !== member);
       updateShoppingList({ ...shoppingList, members: updatedMembers });
+    } else {
+      alert("You don't have permission to remove members.");
     }
   };
 
-  const handleLeaveList = (shoppingList) => {
+  const handleLeaveList = () => {
     // If the current user is the owner, prevent them from leaving the list
     if (user.username === shoppingList.owner) {
       alert("As the owner, you cannot leave the list.");
       return;
     }
-  
+    
     // If the current user is not the owner, remove them from the list
     const updatedMembers = shoppingList.members.filter(member => member !== user.username);
     updateShoppingList({ ...shoppingList, members: updatedMembers });
   };
   
-
+  // const handleLogout = () => {
+  //   // Log out the user
+  //   // This function should handle the logout process in your application
+  //   handleLeaveList(); // Leave the list when the user logs out
+  //   setUser(null); // Logout the user
+  // };
+  
   const handleItemAdd = () => {
     if (!/^[a-zA-Z\s]+$/.test(newItemName.trim())) {
       alert('Please enter a valid item name containing only letters.');
@@ -104,39 +112,43 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
       </h2>
       <p>Owner: {shoppingList.owner}</p>
     
-      {user.username === shoppingList.owner && (
-        <>
-          <h3>Members:</h3>
-          <ul>
-            {shoppingList.members.map(member => (
-              <li key={member}>
-                {member}
-                {member === user.username ? (
-                 <button onClick={() => handleLeaveList(shoppingList)}>
-                 Leave List
-               </button>
-               
-                ) : (
+      <>
+        <h3>Members:</h3>
+        <ul>
+          {shoppingList.members.map(member => (
+            <li key={member}>
+              {member}
+              {member === user.username ? (
+                <button onClick={handleLeaveList}>
+                  Leave List
+                </button>
+              ) : (
+                user.username === shoppingList.owner && (
                   <button onClick={() => handleMemberRemove(member)}>
                     <img src={removeIcon} alt="Remove Member" width="20" height="20" />
                   </button>
-                )}
-              </li>
-            ))}
-            <li>
-              <input
-                type="text"
-                value={newMember}
-                onChange={(e) => setNewMember(e.target.value)}
-                placeholder="Enter new member name"
-              />
-              <button onClick={handleMemberAdd}>
-                <img src={addIcon} alt="Add Member" width="20" height="20" />
-              </button>
+                )
+              )}
             </li>
-          </ul>
-        </>
+          ))}
+          <li>
+            <input
+              type="text"
+              value={newMember}
+              onChange={(e) => setNewMember(e.target.value)}
+              placeholder="Enter new member name"
+            />
+            <button onClick={handleMemberAdd}>
+              <img src={addIcon} alt="Add Member" width="20" height="20" />
+            </button>
+          </li>
+        </ul>
+        {user.username !== shoppingList.owner && (
+        <button onClick={handleLeaveList}>
+          Leave List
+        </button>
       )}
+      </>
       <h3>Items:</h3>
       <div className="filter-container">
         <label>
@@ -178,6 +190,7 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
           </button>
         </li>
       </ul>
+     
       <Link to="/" className="back-link">
         <img src={backIcon} alt="Back to Shopping Lists Overview" width="20" height="20" />
       </Link>
