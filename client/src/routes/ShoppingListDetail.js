@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import markAsResolvedIcon from '../images/mark_as_resolved_icon.png';
 import removeIcon from '../images/remove_icon.png';
 import addIcon from '../images/add_icon.png';
 import backIcon from '../images/back_icon.png';
-// import logoutIcon from '../images/logout_icon.png'; // Commented out to remove unused variable warning
+
 
 function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }) {
   const { id } = useParams();
@@ -16,7 +16,7 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
   const shoppingList = shoppingLists.find(list => list.id === parseInt(id));
 
   if (!user) {
-    return <div>Please log in to view this page.</div>;
+    return <Navigate to="/" />;
   }
 
   if (!shoppingList) {
@@ -59,14 +59,8 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
     // If the current user is not the owner, remove them from the list
     const updatedMembers = shoppingList.members.filter(member => member !== user.username);
     updateShoppingList({ ...shoppingList, members: updatedMembers });
+    setUser(null); // Logout the user after leaving the list
   };
-  
-  // const handleLogout = () => {
-  //   // Log out the user
-  //   // This function should handle the logout process in your application
-  //   handleLeaveList(); // Leave the list when the user logs out
-  //   setUser(null); // Logout the user
-  // };
   
   const handleItemAdd = () => {
     if (!/^[a-zA-Z\s]+$/.test(newItemName.trim())) {
@@ -144,10 +138,10 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
           </li>
         </ul>
         {user.username !== shoppingList.owner && (
-        <button onClick={handleLeaveList}>
-          Leave List
-        </button>
-      )}
+          <button onClick={handleLeaveList}>
+            Leave List
+          </button>
+        )}
       </>
       <h3>Items:</h3>
       <div className="filter-container">
