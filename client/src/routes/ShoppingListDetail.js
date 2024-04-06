@@ -4,6 +4,9 @@ import markAsResolvedIcon from '../images/mark_as_resolved_icon.png';
 import removeIcon from '../images/remove_icon.png';
 import addIcon from '../images/add_icon.png';
 import backIcon from '../images/back_icon.png';
+import ShoppingListTile from '../utils/ShoppingListTile';
+
+
 
 function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   const { id } = useParams();
@@ -11,6 +14,7 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   const [newMember, setNewMember] = useState('');
   const [newItemName, setNewItemName] = useState('');
   const [filterResolved, setFilterResolved] = useState(false);
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'tiles'
 
   const shoppingList = shoppingLists.find(list => list.id === parseInt(id));
 
@@ -39,7 +43,14 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   };
   
   const handleMemberRemove = (member) => {
-    // Only allow owner to remove members
+    // Check if the member to be removed is the owner
+    if (member === shoppingList.owner) {
+      // If the member to be removed is the owner, prevent removal
+      alert("The owner cannot be removed from the list.");
+      return;
+    }
+  
+    // Only allow owner to remove members other than themselves
     if (user.username === shoppingList.owner) {
       const updatedMembers = shoppingList.members.filter(m => m !== member);
       updateShoppingList({ ...shoppingList, members: updatedMembers });
@@ -47,18 +58,21 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
       alert("You don't have permission to remove members.");
     }
   };
+  
 
   const handleLeaveList = () => {
-    // If the current user is the owner, prevent them from leaving the list
+    // Check if the current user is the owner
     if (user.username === shoppingList.owner) {
+      // If the current user is the owner, prevent them from leaving the list
       alert("As the owner, you cannot leave the list.");
       return;
     }
-    
+  
     // If the current user is not the owner, remove them from the list
     const updatedMembers = shoppingList.members.filter(member => member !== user.username);
     updateShoppingList({ ...shoppingList, members: updatedMembers });
   };
+  
   
   const handleItemAdd = () => {
     if (!/^[a-zA-Z\s]+$/.test(newItemName.trim())) {
@@ -85,6 +99,10 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
 
   const handleFilterToggle = () => {
     setFilterResolved(!filterResolved);
+  };
+
+  const toggleViewMode = () => {
+    setViewMode(viewMode === 'list' ? 'tiles' : 'list');
   };
 
   return (
@@ -147,37 +165,63 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
             onChange={handleFilterToggle}
           />
         </label>
+        <button onClick={toggleViewMode}>
+          {viewMode === 'list' ? 'Show as Tiles' : 'Show as List'}
+        </button>
       </div>
-      <ul>
-        {shoppingList.items.map(item => (
-          (!filterResolved || !item.resolved) && (
-            <li key={item.id}>
-              {item.name} {item.resolved ? '(Resolved)' : ''}
-              {!item.resolved && (
-                <>
-                  <button onClick={() => handleItemResolve(item.id)}>
-                    <img src={markAsResolvedIcon} alt="Mark as Resolved" width="20" height="20" />
-                  </button>
-                  <button onClick={() => handleItemRemove(item.id)}>
-                    <img src={removeIcon} alt="Remove" width="20" height="20" />
-                  </button>
-                </>
-              )}
-            </li>
-          )
-        ))}
-        <li>
-          <input
-            type="text"
-            value={newItemName}
-            onChange={(e) => setNewItemName(e.target.value)}
-            placeholder="Enter new item name"
-          />
-          <button onClick={handleItemAdd}>
-            <img src={addIcon} alt="Add Item" width="20" height="20" />
-          </button>
-        </li>
-      </ul>
+      {viewMode === 'tiles' ? (
+        <div className="tile-container">
+          {shoppingList.items.map(item => (
+            (!filterResolved || !item.resolved) && (
+              <ShoppingListTile key={item.id} list={item} />
+            )
+          ))}
+          <div className="tile">
+            <input
+              type="text"
+              value={newItemName}
+              onChange={(e) => setNewItemName(e.target.value)}
+              placeholder="Enter new item name"
+            />
+            <button onClick={handleItemAdd}>
+              <img src={addIcon} alt="Add Item" width="20" height="20" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="list-container">
+          <ul>
+            {shoppingList.items.map(item => (
+              (!filterResolved || !item.resolved) && (
+                <div key={item.id} className="list-item">
+                  <span>{item.name} {item.resolved ? '(Resolved)' : ''}</span>
+                  {!item.resolved && (
+                    <>
+                      <button onClick={() => handleItemResolve(item.id)}>
+                        <img src={markAsResolvedIcon} alt="Mark as Resolved" width="20" height="20" />
+                      </button>
+                      <button onClick={() => handleItemRemove(item.id)}>
+                        <img src={removeIcon} alt="Remove" width="20" height="20" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              )
+            ))}
+            <div className="list-item">
+              <input
+                type="text"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                placeholder="Enter new item name"
+              />
+              <button onClick={handleItemAdd}>
+                <img src={addIcon} alt="Add Item" width="20" height="20" />
+              </button>
+            </div>
+          </ul>
+        </div>
+      )}
      
       <Link to="/" className="back-link">
         <img src={backIcon} alt="Back to Shopping Lists Overview" width="20" height="20" />
