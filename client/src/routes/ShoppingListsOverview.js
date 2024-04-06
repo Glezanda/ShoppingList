@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import addIcon from '../images/add_icon.png';
 import removeIcon from '../images/remove_icon.png';
 import logoutIcon from '../images/logout_icon.png';
+import archiveIcon from '../images/archive_icon.png';
 
 function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShoppingList, user, setUser, updateShoppingList }) {
   const [newListName, setNewListName] = useState('');
@@ -10,6 +11,7 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
 
   const handleInputChange = (e) => {
     setNewListName(e.target.value);
@@ -58,14 +60,12 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
     setUser(null);
   };
 
-  const handleLeaveList = (listId) => {
+  const handleArchiveList = (listId) => {
     const updatedList = shoppingLists.find(list => list.id === listId);
-    if (!updatedList || !updatedList.members.includes(user.username)) {
+    if (!updatedList || updatedList.owner !== user.username) {
       return;
     }
-    const updatedMembers = updatedList.members.filter(member => member !== user.username);
-    updateShoppingList({ ...updatedList, members: updatedMembers });
-    setUser(null);
+    updateShoppingList({ ...updatedList, archived: true });
   };
 
   return (
@@ -83,21 +83,37 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
       ) : (
         <button onClick={handleLogin}>Login</button>
       )}
+      <div>
+        <label>
+          Show Archived Lists
+          <input
+            type="checkbox"
+            checked={showArchived}
+            onChange={() => setShowArchived(!showArchived)}
+          />
+        </label>
+      </div>
       <ul>
         {shoppingLists.map(list => (
-          <li key={list.id} className="shopping-list-item">
-            <Link to={`/shopping-list/${list.id}`} className="shopping-list-link">
-              {list.name} (Owner: {list.owner}) {list.archived ? '(Archived)' : ''}
-            </Link>
-            <button onClick={() => removeShoppingList(list.id)}>
-              <img src={removeIcon} alt="Remove Shopping List" width="20" height="20" />
-            </button>
-            {user && (
-              <button onClick={() => handleLeaveList(list.id)}>
-                <img src={logoutIcon} alt="Leave List" width="20" height="20" />
-              </button>
-            )}
-          </li>
+          (showArchived || !list.archived) && (
+            <li key={list.id} className="shopping-list-item">
+              <Link to={`/shopping-list/${list.id}`} className="shopping-list-link">
+                {list.name} (Owner: {list.owner}) {list.archived ? '(Archived)' : ''}
+              </Link>
+              {user && list.owner === user.username && (
+                <>
+                  <button onClick={() => removeShoppingList(list.id)}>
+                    <img src={removeIcon} alt="Remove Shopping List" width="20" height="20" />
+                  </button>
+                  {!list.archived && (
+                    <button onClick={() => handleArchiveList(list.id)}>
+                      <img src={archiveIcon} alt="Archive List" width="20" height="20" />
+                    </button>
+                  )}
+                </>
+              )}
+            </li>
+          )
         ))}
       </ul>
       <div>
@@ -132,7 +148,6 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
               autoComplete="current-password"
             />
             <button className="centered" onClick={handleLogin}>Login</button>
-
           </form>
         </div>
       )}

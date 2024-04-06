@@ -5,8 +5,7 @@ import removeIcon from '../images/remove_icon.png';
 import addIcon from '../images/add_icon.png';
 import backIcon from '../images/back_icon.png';
 
-
-function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }) {
+function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   const { id } = useParams();
   const [editedName, setEditedName] = useState('');
   const [newMember, setNewMember] = useState('');
@@ -19,8 +18,8 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
     return <Navigate to="/" />;
   }
 
-  if (!shoppingList) {
-    return <div>Loading...</div>;
+  if (!shoppingList || !shoppingList.members.includes(user.username)) {
+    return <Navigate to="/" />;
   }
 
   const handleNameChange = (e) => {
@@ -59,7 +58,6 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
     // If the current user is not the owner, remove them from the list
     const updatedMembers = shoppingList.members.filter(member => member !== user.username);
     updateShoppingList({ ...shoppingList, members: updatedMembers });
-    setUser(null); // Logout the user after leaving the list
   };
   
   const handleItemAdd = () => {
@@ -112,19 +110,20 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
           {shoppingList.members.map(member => (
             <li key={member}>
               {member}
-              {member === user.username ? (
-                <button onClick={handleLeaveList}>
-                  Leave List
+              {user.username === shoppingList.owner && (
+                <button onClick={() => handleMemberRemove(member)}>
+                  <img src={removeIcon} alt="Remove Member" width="20" height="20" />
                 </button>
-              ) : (
-                user.username === shoppingList.owner && (
-                  <button onClick={() => handleMemberRemove(member)}>
-                    <img src={removeIcon} alt="Remove Member" width="20" height="20" />
-                  </button>
-                )
               )}
             </li>
           ))}
+          {user.username !== shoppingList.owner && (
+            <li>
+              <button onClick={handleLeaveList}>
+                Leave List
+              </button>
+            </li>
+          )}
           <li>
             <input
               type="text"
@@ -137,11 +136,6 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user, setUser }
             </button>
           </li>
         </ul>
-        {user.username !== shoppingList.owner && (
-          <button onClick={handleLeaveList}>
-            Leave List
-          </button>
-        )}
       </>
       <h3>Items:</h3>
       <div className="filter-container">
