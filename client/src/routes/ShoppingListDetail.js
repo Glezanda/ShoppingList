@@ -6,8 +6,6 @@ import addIcon from '../images/add_icon.png';
 import backIcon from '../images/back_icon.png';
 import ShoppingListTile from '../utils/ShoppingListTile';
 
-
-
 function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   const { id } = useParams();
   const [editedName, setEditedName] = useState('');
@@ -43,14 +41,11 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   };
   
   const handleMemberRemove = (member) => {
-    // Check if the member to be removed is the owner
     if (member === shoppingList.owner) {
-      // If the member to be removed is the owner, prevent removal
       alert("The owner cannot be removed from the list.");
       return;
     }
   
-    // Only allow owner to remove members other than themselves
     if (user.username === shoppingList.owner) {
       const updatedMembers = shoppingList.members.filter(m => m !== member);
       updateShoppingList({ ...shoppingList, members: updatedMembers });
@@ -61,14 +56,11 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
   
 
   const handleLeaveList = () => {
-    // Check if the current user is the owner
     if (user.username === shoppingList.owner) {
-      // If the current user is the owner, prevent them from leaving the list
       alert("As the owner, you cannot leave the list.");
       return;
     }
   
-    // If the current user is not the owner, remove them from the list
     const updatedMembers = shoppingList.members.filter(member => member !== user.username);
     updateShoppingList({ ...shoppingList, members: updatedMembers });
   };
@@ -173,7 +165,7 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
         <div className="tile-container">
           {shoppingList.items.map(item => (
             (!filterResolved || !item.resolved) && (
-              <ShoppingListTile key={item.id} list={item} />
+              <ShoppingListTile key={item.id} item={item} />
             )
           ))}
           <div className="tile">
