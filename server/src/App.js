@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
@@ -7,10 +8,9 @@ function App() {
 
   useEffect(() => {
     // Fetch users when component mounts
-    fetch('/api/users')
-      .then(response => response.json())
-      .then(data => {
-        setUsers(data.users);
+    axios.get('/api/users')
+      .then(response => {
+        setUsers(response.data);
         setLoading(false);
       })
       .catch(error => {
@@ -20,21 +20,19 @@ function App() {
   }, []); // Empty dependency array ensures this effect runs only once
 
   const handleDeleteUser = userId => {
-    fetch(`/api/users/${userId}`, {
-      method: 'DELETE',
-    })
-    .then(response => {
-      if (response.ok) {
-        // If the response is successful, update the users state after successful deletion
-        setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
-      } else {
-        // If the response is not successful, throw an error
-        throw new Error('Failed to delete user');
-      }
-    })
-    .catch(error => {
-      console.error('Error deleting user:', error);
-    });
+    axios.delete(`/api/users/${userId}`)
+      .then(response => {
+        if (response.status === 200) {
+          // If the response is successful, update the users state after successful deletion
+          setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+        } else {
+          // If the response is not successful, throw an error
+          throw new Error('Failed to delete user');
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting user:', error);
+      });
   };
 
   return (
