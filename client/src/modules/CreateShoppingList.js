@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Import Axios for making HTTP requests
 import './Modal.css'; // Import modal styles from the correct path
 import Modal from './Modal'; // Import modal component from the correct path
 
@@ -16,26 +17,27 @@ function CreateShoppingList({ addNewShoppingList }) {
     setError(''); // Clear error when input changes
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (newListName.trim() === '') {
       setError('Please enter a valid shopping list name.'); // Set error message
       return;
     }
-    // Create a new shopping list object
-    const newList = {
-      id: Date.now(), // Use timestamp as ID for simplicity
-      name: newListName,
-      owner: 'You', // Assuming the owner is the current user
-      members: [], // Initialize with an empty array of members
-      items: [], // Initialize with an empty array of items
-      archived: false, // Initialize as not archived
-    };
-    // Call the function from the parent component to add the new shopping list
-    addNewShoppingList(newList);
-    // Clear the input field after submission
-    setNewListName('');
-    setShowModal(false); // Close the modal after submission
+
+    try {
+      const response = await axios.post('http://localhost:3000/shoppingList/create', {
+        name: newListName,
+        // You may need to include other data in the request body, depending on your API requirements
+      });
+      // If the request is successful, add the new shopping list to the state
+      addNewShoppingList(response.data);
+      // Clear the input field after submission
+      setNewListName('');
+      setShowModal(false); // Close the modal after submission
+    } catch (error) {
+      console.error('Error creating shopping list:', error.response.data);
+      setError('An error occurred while creating the shopping list. Please try again later.');
+    }
   };
 
   const handleBackNavigation = () => {
