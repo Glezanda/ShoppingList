@@ -1,30 +1,30 @@
 const express = require("express");
 const router = express.Router();
 
-const Createpoint = require("../point/create-point");
-const Getpoint = require("../point/get-point");
-const Updatepoint = require("../point/update-point");
-const Deletepoint = require("../point/delete-point");
-const Listpoint = require("../point/list-point");
+const Createdao = require("../dao/create-dao");
+const Getdao = require("../dao/get-dao");
+const Updatedao = require("../dao/update-dao");
+const Deletedao = require("../dao/delete-dao");
+const Listdao = require("../dao/list-dao");
 
 router.post("/create", async (req, res) => {
-  await Createpoint(req, res);
+  await Createdao(req, res);
 });
 
 router.get("/get", async (req, res) => {
-  await Getpoint(req, res);
+  await Getdao(req, res);
 });
 
 router.post("/update", async (req, res) => {
-  await Updatepoint(req, res);
+  await Updatedao(req, res);
 });
 
 router.post("/delete", async (req, res) => {
-  await Deletepoint(req, res);
+  await Deletedao(req, res);
 });
 
 router.get("/list", async (req, res) => {
-  await Listpoint(req, res);
+  await Listdao(req, res);
 });
 
 module.exports = router;

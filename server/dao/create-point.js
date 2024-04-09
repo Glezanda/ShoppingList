@@ -1,6 +1,6 @@
 const path = require("path");
 const Ajv = require("ajv");
-const Listinput = require("../input/ShoppingList");
+const Listinput = require("../abl/ShoppingList");
 let input = new Listinput(
   path.join(__dirname, "..", "storage", "lists.json")
 );

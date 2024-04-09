@@ -7,13 +7,13 @@ const crypto = require("crypto");
 const rf = fs.promises.readFile;
 const wf = fs.promises.writeFile;
 
-const DEFAULT_STORAGE_PATH = (path.join(__dirname, "..", "storage", "lists.json"), "utf-8");
+const DEFAULT_Database_PATH = (path.join(__dirname, "..", "database", "lists.json"), "utf-8");
 
 class ListItem {
-  constructor(storagePath) {
-    this.listStoragePath = storagePath
-      ? storagePath
-      : DEFAULT_STORAGE_PATH;
+  constructor(DatabasePath) {
+    this.listDatabasePath = DatabasePath
+      ? DatabasePath
+      : DEFAULT_Database_PATH;
   }
 
   async createList(list) {
@@ -21,14 +21,14 @@ class ListItem {
     list.id = crypto.randomBytes(4).toString("hex");
     listList.push(list);
     await wf(
-      this._getStorageLocation(),
+      this._getDatabaseLocation(),
       JSON.stringify(listList, null, 2)
     );
     return list;
   }
 
   async getList(id) {
-    let list = await this._AllListss();
+    let list = await this._AllLists();
     const result = list.find((b) => b.id === id);
     return result;
   }
@@ -49,7 +49,7 @@ class ListItem {
       };
     }
     await wf(
-      this._getStorageLocation(),
+      this._getDatabaseLocation(),
       JSON.stringify(listList, null, 2)
     );
     return listList[listIndex];
@@ -62,7 +62,7 @@ class ListItem {
       listList.splice(listIndex, 1);
     }
     await wf(
-      this._getStorageLocation(),
+      this._getDatabaseLocation(),
       JSON.stringify(listList, null, 2)
     );
     return {};
@@ -76,23 +76,23 @@ class ListItem {
   async _AllLists() {
     let listLists;
     try {
-      listLists = JSON.parse(await rf(this._getStorageLocation()));
+      listLists = JSON.parse(await rf(this._getDatabaseLocation()));
     } catch (e) {
       if (e.code === "ENOENT") {
-        console.info("No storage found, initializing new one...");
+        console.info("No Database found, initializing new one...");
         listLists = [];
       } else {
         throw new Error(
-          "Unable to read from storage. Wrong data format. " +
-            this._getStorageLocation()
+          "Unable to read from Database. Wrong data format. " +
+            this._getDatabaseLocation()
         );
       }
     }
     return listLists;
   }
 
-  _getStorageLocation() {
-    return this.listStoragePath;
+  _getDatabaseLocation() {
+    return this.listDatabasePath;
   }
 }
 
