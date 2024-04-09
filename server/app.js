@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const shoppingListRouter = require("./controller/controller");
+const shoppingListRouter = require("./controller/endpoint");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -17,7 +17,7 @@ app.use("/shoppingList", shoppingListRouter);
 
 app.get("/users", (req, res) => {
   try {
-    const usersData = fs.readFileSync(path.join(__dirname, "storage", "users.json"), "utf-8");
+    const usersData = fs.readFileSync(path.join(__dirname, "database", "users.json"), "utf-8");
     const users = JSON.parse(usersData);
     res.json(users);
   } catch (error) {

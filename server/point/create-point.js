@@ -1,7 +1,7 @@
 const path = require("path");
 const Ajv = require("ajv");
-const ListDao = require("../dao/shList-dao");
-let dao = new ListDao(
+const Listinput = require("../input/ShoppingList");
+let input = new Listinput(
   path.join(__dirname, "..", "storage", "lists.json")
 );
 
@@ -41,7 +41,7 @@ async function CreateAbl(req, res) {
     const valid = true;
     if (valid) {
       let list = req.body;
-      list = await dao.createList(list);
+      list = await input.createList(list);
       res.json(list);
     } else {
       res.status(400).send({

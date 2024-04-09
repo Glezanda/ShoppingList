@@ -1,7 +1,7 @@
 const path = require("path");
 const Ajv = require("ajv").default;
-const ListDao = require("../dao/shList-dao");
-let dao = new ListDao(
+const Listinput = require("../input/ShoppingList");
+let input = new Listinput(
   path.join(__dirname, "..", "storage", "lists.json")
 );
 
@@ -19,7 +19,7 @@ async function DeleteAbl(req, res) {
   try {
     if (valid) {
       const listId = req.body.id;
-      await dao.deleteList(listId);
+      await input.deleteList(listId);
       res.json({});
     } else {
       res.status(400).send({

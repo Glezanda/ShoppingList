@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const ListDao = require("../dao/shList-dao");
+const Listinput = require("../input/ShoppingList");
 
-let dao = new ListDao(path.join(__dirname, "..", "storage", "lists.json"));
+let input = new Listinput(path.join(__dirname, "..", "storage", "lists.json"));
 
 async function ListAbl(req, res) {
   try {

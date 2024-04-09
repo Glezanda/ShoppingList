@@ -9,7 +9,7 @@ const wf = fs.promises.writeFile;
 
 const DEFAULT_STORAGE_PATH = (path.join(__dirname, "..", "storage", "lists.json"), "utf-8");
 
-class ListDao {
+class ListItem {
   constructor(storagePath) {
     this.listStoragePath = storagePath
       ? storagePath
@@ -17,7 +17,7 @@ class ListDao {
   }
 
   async createList(list) {
-    let listList = await this._loadAllLists();
+    let listList = await this._AllLists();
     list.id = crypto.randomBytes(4).toString("hex");
     listList.push(list);
     await wf(
@@ -28,13 +28,13 @@ class ListDao {
   }
 
   async getList(id) {
-    let list = await this._loadAllListss();
+    let list = await this._AllListss();
     const result = list.find((b) => b.id === id);
     return result;
   }
 
   async updateList(list) {
-    let listList = await this._loadAllLists();
+    let listList = await this._AllLists();
     const listIndex = listList.findIndex(
       (b) => b.id === list.id
     );
@@ -56,7 +56,7 @@ class ListDao {
   }
 
   async deleteList(id) {
-    let listList = await this._loadAllLists();
+    let listList = await this._AllLists();
     const listIndex = listList.findIndex((b) => b.id === id);
     if (listIndex >= 0) {
       listList.splice(listIndex, 1);
@@ -69,11 +69,11 @@ class ListDao {
   }
 
   async listLists() {
-    let listLists = await this._loadAllLists();
+    let listLists = await this._AllLists();
     return listLists;
   }
 
-  async _loadAllLists() {
+  async _AllLists() {
     let listLists;
     try {
       listLists = JSON.parse(await rf(this._getStorageLocation()));
@@ -96,4 +96,4 @@ class ListDao {
   }
 }
 
-module.exports = ListDao;
+module.exports = ListItem;

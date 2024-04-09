@@ -1,7 +1,7 @@
 const path = require("path");
 const Ajv = require("ajv").default;
-const ListDao = require("../dao/shList-dao");
-let dao = new ListDao(
+const Listinput = require("../input/ShoppingList");
+let input = new Listinput(
   path.join(__dirname, "..", "storage", "lists.json")
 );
 
@@ -21,7 +21,7 @@ async function GetAbl(req, res) {
     const valid = ajv.validate(schema, body);
     if (valid) {
       const listId = body.id;
-      const list = await dao.getList(listId);
+      const list = await input.getList(listId);
       if (!list) {
         res
           .status(400)
