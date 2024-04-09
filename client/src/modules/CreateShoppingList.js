@@ -1,43 +1,38 @@
-import React, { useState } from 'react';
-import axios from 'axios'; // Import Axios for making HTTP requests
-import './Modal.css'; // Import modal styles from the correct path
-import Modal from './Modal'; // Import modal component from the correct path
+// CreateShoppingList.js
 
-// Import add_icon.png and back_icon.png
+import React, { useState } from 'react';
+import './Modal.css';
+import Modal from './Modal';
 import addIcon from '../images/add_icon.png';
 import backIcon from '../images/back_icon.png';
 
-function CreateShoppingList({ addNewShoppingList }) {
+function CreateShoppingList({ addNewShoppingList, user }) {
   const [showModal, setShowModal] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     setNewListName(e.target.value);
-    setError(''); // Clear error when input changes
+    setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (newListName.trim() === '') {
-      setError('Please enter a valid shopping list name.'); // Set error message
+      setError('Please enter a valid shopping list name.');
       return;
     }
-
-    try {
-      const response = await axios.post('http://localhost:3000/shoppingList/create', {
-        name: newListName,
-        // You may need to include other data in the request body, depending on your API requirements
-      });
-      // If the request is successful, add the new shopping list to the state
-      addNewShoppingList(response.data);
-      // Clear the input field after submission
-      setNewListName('');
-      setShowModal(false); // Close the modal after submission
-    } catch (error) {
-      console.error('Error creating shopping list:', error.response.data);
-      setError('An error occurred while creating the shopping list. Please try again later.');
-    }
+    const newList = {
+      id: Date.now(),
+      name: newListName,
+      owner: user ? user.username : 'Guest',
+      members: user ? [user.username] : [], // Automatically add the owner as a member
+      items: [],
+      archived: false,
+    };
+    addNewShoppingList(newList);
+    setNewListName('');
+    setShowModal(false);
   };
 
   const handleBackNavigation = () => {
@@ -54,7 +49,6 @@ function CreateShoppingList({ addNewShoppingList }) {
           <img src={backIcon} alt="Back to Overview" width="20" height="20" />
         </button>
       </div>
-      {/* Add button outside the modal */}
       <button onClick={() => setShowModal(true)}>Create New Shopping List</button>
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
@@ -66,7 +60,7 @@ function CreateShoppingList({ addNewShoppingList }) {
               value={newListName}
               onChange={handleInputChange}
             />
-            {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if there's an error */}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <button type="submit">Create</button>
           </form>
         </Modal>

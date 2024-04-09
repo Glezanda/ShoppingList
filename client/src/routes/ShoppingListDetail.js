@@ -20,7 +20,8 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
     return <Navigate to="/" />;
   }
 
-  if (!shoppingList || !shoppingList.members.includes(user.username)) {
+  // Check if the user is the owner of the list or a member
+  if (!shoppingList || (shoppingList.owner !== user.username && !shoppingList.members.includes(user.username))) {
     return <Navigate to="/" />;
   }
 
@@ -40,6 +41,7 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
     setNewMember('');
   };
   
+  
   const handleMemberRemove = (member) => {
     if (member === shoppingList.owner) {
       alert("The owner cannot be removed from the list.");
@@ -54,7 +56,6 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
     }
   };
   
-
   const handleLeaveList = () => {
     if (user.username === shoppingList.owner) {
       alert("As the owner, you cannot leave the list.");
@@ -64,7 +65,6 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
     const updatedMembers = shoppingList.members.filter(member => member !== user.username);
     updateShoppingList({ ...shoppingList, members: updatedMembers });
   };
-  
   
   const handleItemAdd = () => {
     if (!/^[a-zA-Z\s]+$/.test(newItemName.trim())) {
@@ -120,7 +120,7 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
           {shoppingList.members.map(member => (
             <li key={member}>
               {member}
-              {user.username === shoppingList.owner && (
+              {user.username === shoppingList.owner && member !== shoppingList.owner && (
                 <button onClick={() => handleMemberRemove(member)}>
                   <img src={removeIcon} alt="Remove Member" width="20" height="20" />
                 </button>
@@ -134,17 +134,19 @@ function ShoppingListDetail({ shoppingLists, updateShoppingList, user }) {
               </button>
             </li>
           )}
-          <li>
-            <input
-              type="text"
-              value={newMember}
-              onChange={(e) => setNewMember(e.target.value)}
-              placeholder="Enter new member name"
-            />
-            <button onClick={handleMemberAdd}>
-              <img src={addIcon} alt="Add Member" width="20" height="20" />
-            </button>
-          </li>
+          {user.username === shoppingList.owner && (
+            <li>
+              <input
+                type="text"
+                value={newMember}
+                onChange={(e) => setNewMember(e.target.value)}
+                placeholder="Enter new member name"
+              />
+              <button onClick={handleMemberAdd}>
+                <img src={addIcon} alt="Add Member" width="20" height="20" />
+              </button>
+            </li>
+          )}
         </ul>
       </>
       <h3>Items:</h3>
