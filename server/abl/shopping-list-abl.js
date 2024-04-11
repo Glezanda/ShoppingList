@@ -1,11 +1,11 @@
-const ShoppingList = require("../models/shopping-list"); // Import mongoose modelu nákupního seznamu
+const ShoppingList = require("../models/shopping-list"); // Import mongoose shopping list model
 
 const createShoppingList = async (request, response) => {
 
-    // 01 Vytvoření a uložení nového nákupního seznamu do databáze
+    // Creating and saving a new shopping list to the database
     
         try {
-            // Deklarace pomocné proměnné do které uložím Shopping list, který se uloží do databáze
+            // Declaration of the auxiliary variable in which I will save the Shopping list, which will be saved in the database
             const newShoppingList = await ShoppingList.create(request.body); 
             
             response.status(201).json({     
@@ -28,11 +28,11 @@ const createShoppingList = async (request, response) => {
 
 const getShoppingList = async (request, response) => {
 
-    // 01 Získaní konkrétního nákupního seznamu z databáze
+    // Retrieving a specific shopping list from a database
     
     try {
 
-        // Deklarace pomocné proměnné do které získám Shopping list
+        // Declaration of the auxiliary variable into which I get the Shopping list
         const shoppingList = await ShoppingList.findById(request.params.id);
 
         if (shoppingList){
@@ -65,7 +65,7 @@ const getShoppingList = async (request, response) => {
 
 const listShoppingList = async (request, response) => {
     
-    // 01 Získaní všech nákupních seznamů z databáze.
+    // Retrieving all shopping lists from the database.
     
     try {
 
@@ -90,14 +90,14 @@ const listShoppingList = async (request, response) => {
 
 const updateShoppingList = async (request, response) => {
     
-    // 01 Aktualizace konkrétního nákupního seznamu v databázi
+    // Updating a specific shopping list in the database
     
         try {
-            // Deklarace pomocné proměnné do které získám Shopping list
+            // Declaration of the auxiliary variable into which I get the Shopping list
             const shoppingList = await ShoppingList.findById(request.params.id);
     
             if (shoppingList) {
-                // Deklarace pomocné proměnné, do které získám aktualizovaný Shopping list z databáze
+                // Declaration of auxiliary variable into which I get the updated Shopping list from the database
                 const updatedShoppingList = await ShoppingList.findByIdAndUpdate(
                     request.params.id, 
                     request.body, 
@@ -147,11 +147,11 @@ const updateShoppingList = async (request, response) => {
 const deleteShoppingList = async (request, response) => {
 
     try {
-        // Deklarace pomocné proměnné do které získám Shopping list
+        // Declaration of the auxiliary variable into which I get the Shopping list
         const shoppingList = await ShoppingList.findById(request.params.id);
 
         if (shoppingList) {
-            // Deklarace pomocné proměnné, do které získám Shopping list, který se smaže z databáze
+            // Declaration of auxiliary variable into which I get the updated Shopping list from the database
             const deletedShoppingList = await ShoppingList.findByIdAndDelete(
                 request.params.id, 
                 request.body

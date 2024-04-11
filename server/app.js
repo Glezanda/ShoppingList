@@ -1,27 +1,27 @@
 
-const express = require("express");	// Deklarace Express JS balíčku
+const express = require("express");	// Express JS package declaration
 
-let app = express(); // Deklarace nové Express JS aplikace/serveru
+let app = express(); // Declaration of a new Express JS application/server
 
-const mongoose = require('mongoose'); // Import metod a syntaxe knihovny Mongoose
+const mongoose = require('mongoose'); // Import Mongoose library methods and syntax
 
-require("dotenv").config(); // Konfigurační soubor .env
+require("dotenv").config(); // .env configuration file
 
-const cors = require("cors"); // Deklarace cors
+const cors = require("cors"); // Declaration of cors
 
 const port = process.env.APP_PORT;
 
-const shoppingListRouter = require("./controller/shopping-list-controller"); // Deklarace Routeru 
+const shoppingListRouter = require("./controller/shopping-list-controller"); // Router declaration
 
-const morgan = require('morgan'); // Import balíčku Morgan pro logování volání do konzole  
+const morgan = require('morgan'); // Import the Morgan package for logging calls to the console  
 
 /******************************************************************************************************/
 
 if (process.env.NODE_ENV === "DEVELOPMENT"){
-    app.use(morgan('dev')); // Deklarace middlewaru Morgan pro log volání do konzole
+    app.use(morgan('dev')); // Morgan middleware declaration for console call log
 }
 
-app.use(express.json()); // Deklarace middlewaru pro použití převodníku body z requestu na JSON
+app.use(express.json()); // Middleware declaration for using the body converter from request to JSON
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,13 +31,13 @@ app.use("/shoppingList", shoppingListRouter);
 
 /******************************************************************************************************/
 
-const DB_CONN = process.env.DB_CONN.replace("<PASSWORD>", process.env.DB_PASSWORD); // Vyplnění hesla
+const DB_CONN = process.env.DB_CONN.replace("<PASSWORD>", process.env.DB_PASSWORD); // Entering a password
 
-// Připojení do databáze
+// Database connection
 mongoose.connect(DB_CONN).then(() => {
     //console.log(con.connection);
     console.log("Database successfully connected!");
-}); // Připojení databáze přes knihovnu Mongoose
+}); // Database connection via the Mongoose library
 
 /*********************************************************************************/
 
@@ -50,7 +50,7 @@ app.get("/", (request, response) => {
 
 /******************************************************************************************/
 
-// Specifikace portu, kde server spustím
+// Specifying the port where I will start the server
 app.listen(port, () => {
     console.log(`Server is started on port ${port}!`);
 })
