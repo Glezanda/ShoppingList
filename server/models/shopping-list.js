@@ -5,11 +5,11 @@ const mongoose = require('mongoose'); // Import metod a syntaxe knihovny Mongoos
 const shoppingListSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, "Nákupní musí mít název"],
+        required: [true, "Shopping list must have name"],
     },
     owner: {
         type: String,
-        required: [true, "Nákuní seznam musí mít vlastníka"],
+        required: [true, "Shopping list must have owner"],
     },
     members: {
         type: [String],

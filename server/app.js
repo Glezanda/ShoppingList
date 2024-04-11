@@ -36,14 +36,14 @@ const DB_CONN = process.env.DB_CONN.replace("<PASSWORD>", process.env.DB_PASSWOR
 // Připojení do databáze
 mongoose.connect(DB_CONN).then(() => {
     //console.log(con.connection);
-    console.log("Databáze se úspěšně připojila!");
+    console.log("Database successfully connected!");
 }); // Připojení databáze přes knihovnu Mongoose
 
 /*********************************************************************************/
 
 app.get("/", (request, response) => {
     response.status(200).json({
-        message: "Testovací endpoint! [app.js]",
+        message: "Testing endpoint! [app.js]",
         method: request.method
     });
 })

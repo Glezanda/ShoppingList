@@ -5,11 +5,11 @@ const createShoppingList = async (request, response) => {
     // 01 Vytvoření a uložení nového nákupního seznamu do databáze
     
         try {
-            // Deklarace pomocné proměnné do které uložím nákupní seznam, který se uloží do databáze
+            // Deklarace pomocné proměnné do které uložím Shopping list, který se uloží do databáze
             const newShoppingList = await ShoppingList.create(request.body); 
             
             response.status(201).json({     
-                result: "Úspěch!",
+                result: "Success!",
                 method: request.method,
                 data: {
                     shoppingList: newShoppingList
@@ -18,7 +18,7 @@ const createShoppingList = async (request, response) => {
     
         } catch (error) {
             response.status(400).json({
-                result: "Neúspěch!",
+                result: "Unsuccess!",
                 message: error
             })
         }
@@ -32,12 +32,12 @@ const getShoppingList = async (request, response) => {
     
     try {
 
-        // Deklarace pomocné proměnné do které získám nákupní seznam
+        // Deklarace pomocné proměnné do které získám Shopping list
         const shoppingList = await ShoppingList.findById(request.params.id);
 
         if (shoppingList){
             response.status(200).json({     
-                result: "Úspěch!",
+                result: "Success!",
                 method: request.method,
                 data: {
                     data: shoppingList
@@ -47,15 +47,15 @@ const getShoppingList = async (request, response) => {
 
         else {
             response.status(404).json({     
-                result: "Neúspěch!",
+                result: "Unsuccess!",
                 method: request.method,
-                message: "Požadovaný nákupní seznam nebyl nalezen!"
+                message: "Asked Shopping list was not found!"
             });
         }
     
         } catch (error) {
             response.status(400).json({
-                result: "Neúspěch!",
+                result: "Unsuccess!",
                 message: error
             })
         }
@@ -72,7 +72,7 @@ const listShoppingList = async (request, response) => {
         const shoppingLists = await ShoppingList.find();
         
         response.status(200).json({     
-            result: "Úspěch!",
+            result: "Success!",
             method: request.method,
             results: shoppingLists.length,
             data: shoppingLists
@@ -80,7 +80,7 @@ const listShoppingList = async (request, response) => {
 
     } catch (error) {
         response.status(400).json({
-            result: "Neúspěch!",
+            result: "Unsuccess!",
             message: error.message
         })
     }
@@ -93,11 +93,11 @@ const updateShoppingList = async (request, response) => {
     // 01 Aktualizace konkrétního nákupního seznamu v databázi
     
         try {
-            // Deklarace pomocné proměnné do které získám nákupní seznam
+            // Deklarace pomocné proměnné do které získám Shopping list
             const shoppingList = await ShoppingList.findById(request.params.id);
     
             if (shoppingList) {
-                // Deklarace pomocné proměnné, do které získám aktualizovaný nákupní seznam z databáze
+                // Deklarace pomocné proměnné, do které získám aktualizovaný Shopping list z databáze
                 const updatedShoppingList = await ShoppingList.findByIdAndUpdate(
                     request.params.id, 
                     request.body, 
@@ -108,9 +108,9 @@ const updateShoppingList = async (request, response) => {
             
                 if (updatedShoppingList){
                     response.status(202).json({     
-                        result: "Úspěch!",
+                        result: "Success!",
                         method: request.method,
-                        message: "Nákupní seznam byl aktualizován!",
+                        message: "Shopping list was updated!",
                         data: {
                             updatedShoppingList: updatedShoppingList
                         }
@@ -119,24 +119,24 @@ const updateShoppingList = async (request, response) => {
     
                 else {
                     response.status(404).json({     
-                        result: "Neúspěch!",
+                        result: "Unsuccess!",
                         method: request.method,
-                        message: "Nákupní seznam nebyl aktualizován!"
+                        message: "Shopping list was not updated!"
                     });
                 }
             }
     
             else {
                 response.status(404).json({     
-                    result: "Neúspěch!",
+                    result: "Unsuccess!",
                     method: request.method,
-                    message: "Nákupní seznam nebyl nalezen!"
+                    message: "Shopping list was not found!"
                 });
             }
     
         } catch (error) {
             response.status(400).json({
-                result: "Neúspěch!",
+                result: "Unsuccess!",
                 message: error
             })
         }
@@ -147,11 +147,11 @@ const updateShoppingList = async (request, response) => {
 const deleteShoppingList = async (request, response) => {
 
     try {
-        // Deklarace pomocné proměnné do které získám nákupní seznam
+        // Deklarace pomocné proměnné do které získám Shopping list
         const shoppingList = await ShoppingList.findById(request.params.id);
 
         if (shoppingList) {
-            // Deklarace pomocné proměnné, do které získám nákupní seznam, který se smaže z databáze
+            // Deklarace pomocné proměnné, do které získám Shopping list, který se smaže z databáze
             const deletedShoppingList = await ShoppingList.findByIdAndDelete(
                 request.params.id, 
                 request.body
@@ -159,24 +159,24 @@ const deleteShoppingList = async (request, response) => {
         
             if (deletedShoppingList){
                 response.status(201).json({     
-                    result: "Úspěch!",
+                    result: "Success!",
                     method: request.method,
-                    message: "Nákupní seznam byl smazán!",
+                    message: "Shopping list has been deleted!",
                 });
             }
         }
 
         else {
             response.status(404).json({     
-                result: "Neúspěch!",
+                result: "Unsuccess!",
                 method: request.method,
-                message: "Požadovaný nákupní seznam nebyl nalezen!"
+                message: "Asked shopping list was not found!"
             });
         }
 
     } catch (error) {
         response.status(400).json({
-            result: "Neúspěch!",
+            result: "Unsuccess!",
             message: error
         })
     }
