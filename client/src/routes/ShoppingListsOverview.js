@@ -4,6 +4,7 @@ import addIcon from '../images/add_icon.png';
 import removeIcon from '../images/remove_icon.png';
 import logoutIcon from '../images/logout_icon.png';
 import archiveIcon from '../images/archive_icon.png';
+import ShoppingListTile from '../utils/ShoppingListTile';
 
 function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShoppingList, user, setUser, updateShoppingList }) {
   const [newListName, setNewListName] = useState('');
@@ -12,6 +13,7 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showArchived, setShowArchived] = useState(false);
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'tiles'
 
   const handleInputChange = (e) => {
     setNewListName(e.target.value);
@@ -68,6 +70,16 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
     updateShoppingList({ ...updatedList, archived: true });
   };
 
+  const handleRemoveList = (listId) => {
+    if (window.confirm('Are you sure you want to remove this shopping list?')) {
+      setShoppingLists(shoppingLists.filter(list => list.id !== listId));
+    }
+  };
+
+  const handleToggleViewMode = () => {
+    setViewMode(viewMode === 'list' ? 'tiles' : 'list');
+  };
+
   return (
     <div className="shopping-lists-container">
       <h2>Shopping Lists Overview</h2>
@@ -93,29 +105,44 @@ function ShoppingListsOverview({ shoppingLists, setShoppingLists, removeShopping
           />
         </label>
       </div>
-      <ul>
-        {shoppingLists.map(list => (
-          (showArchived || !list.archived) && (
-            <li key={list.id} className="shopping-list-item">
-              <Link to={`/shopping-list/${list.id}`} className="shopping-list-link">
-                {list.name} (Owner: {list.owner}) {list.archived ? '(Archived)' : ''}
-              </Link>
-              {user && list.owner === user.username && (
-                <>
-                  <button onClick={() => removeShoppingList(list.id)}>
+      <div>
+        <button onClick={handleToggleViewMode}>
+          {viewMode === 'list' ? 'Show as Tiles' : 'Show as List'}
+        </button>
+      </div>
+      {viewMode === 'tiles' ? (
+        <div className="tile-container">
+          {shoppingLists.map(list => (
+            (showArchived || !list.archived) && (
+              <ShoppingListTile
+                key={list.id}
+                item={list}
+                onArchive={() => handleArchiveList(list.id)}
+                onRemove={() => handleRemoveList(list.id)}
+                isOwner={user && list.owner === user.username}
+              />
+            )
+          ))}
+        </div>
+      ) : (
+        <ul>
+          {shoppingLists.map(list => (
+            (showArchived || !list.archived) && (
+              <li key={list.id}>
+                <Link to={`/shopping-list/${list.id}`}>{list.name}</Link>
+                {user && list.owner === user.username && (
+                  <button onClick={() => handleRemoveList(list.id)}>
                     <img src={removeIcon} alt="Remove Shopping List" width="20" height="20" />
                   </button>
-                  {!list.archived && (
-                    <button onClick={() => handleArchiveList(list.id)}>
-                      <img src={archiveIcon} alt="Archive List" width="20" height="20" />
-                    </button>
-                  )}
-                </>
-              )}
-            </li>
-          )
-        ))}
-      </ul>
+                )}
+                <button onClick={() => handleArchiveList(list.id)}>
+                  <img src={archiveIcon} alt="Archive List" width="20" height="20" />
+                </button>
+              </li>
+            )
+          ))}
+        </ul>
+      )}
       <div>
         <input
           type="text"
