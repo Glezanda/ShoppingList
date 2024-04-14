@@ -1,9 +1,0 @@
-const deleteShoppingListDtoIn = {
-    id: 661ae9330216305312a261e1
-}
-
-const deleteShoppingListDtoOut = {
-    result: String, // Descripion of the result 
-	method: String, // Descripion of request method
-    message: String // Message for client
-}
