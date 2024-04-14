@@ -1,4 +1,4 @@
-const mongoose = require('mongoose'); // Import metod a syntaxe knihovny Mongoose
+const mongoose = require('mongoose'); // Import Mongoose
 
 /******************************************************************************************************/
 
@@ -21,14 +21,20 @@ const shoppingListSchema = new mongoose.Schema({
         default: false
     },
     items: {
-        type: [{   
+        type: [{  
+            _id: false, // Turn of generating MongoDB Id for object of item 
             item: String,
-            amount: String,
-            state: {
+            amount: Number,
+            unit: {
+                type: String,
+                required: false,
+                default: "piece"
+            },
+            completed: {
                 type: Boolean,
                 required: false,
                 default: false
-            }
+            },    
         }],
         required: false
     },

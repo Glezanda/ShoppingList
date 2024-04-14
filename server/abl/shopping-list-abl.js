@@ -3,7 +3,6 @@ const ShoppingList = require("../models/shopping-list"); // Import mongoose shop
 const createShoppingList = async (request, response) => {
 
     // Creating and saving a new shopping list to the database
-    
         try {
             // Declaration of the auxiliary variable in which I will save the Shopping list, which will be saved in the database
             const newShoppingList = await ShoppingList.create(request.body); 
@@ -11,9 +10,7 @@ const createShoppingList = async (request, response) => {
             response.status(201).json({     
                 result: "Success!",
                 method: request.method,
-                data: {
-                    shoppingList: newShoppingList
-                }
+                data: newShoppingList
             });
     
         } catch (error) {
@@ -39,9 +36,7 @@ const getShoppingList = async (request, response) => {
             response.status(200).json({     
                 result: "Success!",
                 method: request.method,
-                data: {
-                    data: shoppingList
-                }
+                data: shoppingList
             });
         }
 
@@ -111,9 +106,7 @@ const updateShoppingList = async (request, response) => {
                         result: "Success!",
                         method: request.method,
                         message: "Shopping list was updated!",
-                        data: {
-                            updatedShoppingList: updatedShoppingList
-                        }
+                        data: updatedShoppingList
                     });
                 }
     
